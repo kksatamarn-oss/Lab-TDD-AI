@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello TDD</title>
+    <style>
+        body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 2rem; }
+        .card { max-width: 520px; padding: 1.5rem; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        label { display: block; margin-bottom: .5rem; font-weight: 600; }
+        input { width: 100%; padding: .6rem .8rem; border: 1px solid #d1d5db; border-radius: 8px; }
+        button { margin-top: 1rem; padding: .6rem 1rem; border: 0; border-radius: 8px; background: #2563eb; color: #fff; cursor: pointer; }
+        button:disabled { opacity: .6; cursor: not-allowed; }
+        .result { margin-top: 1rem; font-size: 1.1rem; font-weight: 600; }
+        .muted { color: #6b7280; font-weight: 400; }
+    </style>
+    <script>
+        async function greet(evt) {
+            evt.preventDefault();
+            const btn = document.getElementById('btn');
+            const name = document.getElementById('name').value.trim();
+            const out = document.getElementById('out');
+            out.textContent = '';
+            btn.disabled = true;
+            try {
+                const params = name ? ('?name=' + encodeURIComponent(name)) : '';
+                const res = await fetch('/greet' + params, { headers: { 'Accept': 'text/plain' } });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const text = await res.text();
+                out.textContent = text;
+            } catch (e) {
+                out.textContent = 'Error: ' + e.message;
+                out.classList.add('muted');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('form').addEventListener('submit', greet);
+        });
+    </script>
+    </head>
+<body>
+    <div class="card">
+        <h1>Hello TDD</h1>
+        <p class="muted">Enter a name (or leave empty for Friend) and click Greet.</p>
+        <form id="form">
+            <label for="name">Name</label>
+            <input id="name" name="name" placeholder="World" />
+            <button id="btn" type="submit">Greet</button>
+        </form>
+        <div id="out" class="result" aria-live="polite"></div>
+    </div>
+</body>
+</html>
+
+
